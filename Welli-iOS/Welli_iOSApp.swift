@@ -12,7 +12,6 @@ import FirebaseDatabase
 import HealthKit
 import BackgroundTasks
 import UserNotifications
-import WatchConnectivity
 
 
 @main

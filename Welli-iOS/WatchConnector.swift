@@ -12,22 +12,22 @@ import Swift
 import SwiftUI
 import FirebaseDatabase
 
-class ViewModelPhone : NSObject,  WCSessionDelegate{
+class ViewModelPhone : NSObject,  WCSessionDelegate {
     @Published var messageText = ""
 
     private let ref = Database.database().reference()
     
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        
+        print("\(session.isReachable) \(session.isPaired) \(session.isWatchAppInstalled)")
     }
     
     func sessionDidBecomeInactive(_ session: WCSession) {
-        
+        print("sessionDidBecomeInactive \(session)")
     }
     
     func sessionDidDeactivate(_ session: WCSession) {
-        
+        print("sessionDidDeactivate \(session)")
     }
     
     var session: WCSession
@@ -40,6 +40,7 @@ class ViewModelPhone : NSObject,  WCSessionDelegate{
     }
     
     func sendDictionaryToiOSApp(_ dictionary: [String: Any]) {
+        print("sendDictionaryToiOSApp \(dictionary)")
         let session = WCSession.default
         if session.isReachable {
             session.sendMessage(dictionary, replyHandler: nil, errorHandler: nil)
@@ -51,7 +52,16 @@ class ViewModelPhone : NSObject,  WCSessionDelegate{
         
         print("Received dictionary: \(message)")
         
+        if let heartRates = message["heartRate"] as? [Double] {
+                // Do something with the received heart rate data
+            for heartRate in heartRates {
+                print("Received heart rate: \(heartRate) bpm")
+                ThresholdNotifier.shared.handleHeartRateSample(heartRate)
+            }
+        }
+        
         let username:String = message["user"] as! String //GET username from dictionary NOT IN FIREBASE
+        print("username => \(username)")
         
         if let messageType = message["type"] as? String {
             if messageType == "threshold" {
@@ -61,11 +71,13 @@ class ViewModelPhone : NSObject,  WCSessionDelegate{
                 
                 // Store the message in the Firebase database under a different node
                 self.ref.child("Notification").child("\(username)").childByAutoId().setValue(message)
+                print("\(self.ref.url)")
+                print("\(self.ref.database)")
+                print("\(self.ref.root)")
             } else {
                 // Handle other dictionary messages
                 //MARK: Push dictionary data to firebase database under "iOS"
                 self.ref.child("ios").child("\(username)").childByAutoId().setValue(message)
-
                 //MARK: Push Rewards
                 
                 //If rewards finds username
@@ -110,7 +122,5 @@ class ViewModelPhone : NSObject,  WCSessionDelegate{
             }
         }
     }
-    
-    
 }
 

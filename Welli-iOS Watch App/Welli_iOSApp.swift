@@ -93,7 +93,9 @@ struct Welli_iOS_Watch_AppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView().environmentObject(environmentObject).onAppear {
+            ContentView()
+                .environmentObject(environmentObject)
+                .onAppear {
                 if WCSession.isSupported() {
                     WCSession.default.activate()
                 }

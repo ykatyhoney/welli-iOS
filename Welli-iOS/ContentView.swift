@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import WatchConnectivity
 import UIKit
 import UserNotifications
 import HealthKit
