@@ -1,4 +1,5 @@
 import Foundation
+import UserNotifications
 import HealthKit
 import WatchConnectivity
 import WatchKit
@@ -79,18 +80,35 @@ class HeartRateMonitor {
 
                 self.fetchMostRecentHeartRateSamples { heartRateSamples in
                     // Extract the heart rate value from the samples
-                    let heartRates = heartRateSamples.map { sample in
+                    var heartRates = heartRateSamples.map { sample in
                         sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
                     }
                     
                     // Send the heart rates to the paired iPhone app
                     let message: [String: Any] = ["heartRate": heartRates]
+                    //TODO: Original code i.e previous code
+                    /*
                     if WCSession.default.isReachable {
                         WCSession.default.sendMessage(message, replyHandler: nil) { error in
                             print("Failed to send message to iPhone app: \(error.localizedDescription)")
                         }
                     } else {
                         print("Paired device is not reachable")
+                    }
+                     */
+                    
+                    //TODO: test code to be removed
+                        heartRates.append(71.0)
+                    //TODO: end of test code to be removed
+                    if heartRates.contains(where: { $0 > 70 }) {
+                        if WCSession.default.isReachable {
+                            WCSession.default.sendMessage(message, replyHandler: nil) { error in
+                                print("Failed to send message to iPhone app: \(error.localizedDescription)")
+                                self.fireLocalNotification()
+                            }
+                        } else {
+                            print("Paired device is not reachable")
+                        }
                     }
 
                     self.isQueryInProgress = false
@@ -141,4 +159,13 @@ class HeartRateMonitor {
         // Execute the query
         healthStore.execute(query)
     }
+    
+    func fireLocalNotification() {
+            let content = UNMutableNotificationContent()
+            content.title = "High Heart Rate"
+            content.body = "Your heart rate is above 70 bpm."
+
+            let request = UNNotificationRequest(identifier: "HighHeartRate", content: content, trigger: nil)
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        }
 }
