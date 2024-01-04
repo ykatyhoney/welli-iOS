@@ -125,8 +125,10 @@ class HeartRateDataManager: NSObject, WCSessionDelegate {
             print("General task - heart rate sample: \(heartRate) bpm")
 
             if heartRate > 70 { // Custom threshold value
-                self.sendHeartRateNotification(heartRate: heartRate)
-                self.storeHeartRateData(heartRate: heartRate)
+                DispatchQueue.main.async {
+                    self.sendHeartRateNotification(heartRate: heartRate)
+                    self.storeHeartRateData(heartRate: heartRate)
+                }
             }
         }
     }

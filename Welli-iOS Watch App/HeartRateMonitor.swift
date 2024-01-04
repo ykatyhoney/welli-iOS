@@ -97,14 +97,19 @@ class HeartRateMonitor {
                     }
                      */
                     
+                    
                     //TODO: test code to be removed
                         heartRates.append(71.0)
                     //TODO: end of test code to be removed
                     if heartRates.contains(where: { $0 > 70 }) {
                         if WCSession.default.isReachable {
                             WCSession.default.sendMessage(message, replyHandler: nil) { error in
-                                print("Failed to send message to iPhone app: \(error.localizedDescription)")
-                                self.fireLocalNotification()
+                                
+                                DispatchQueue.main.async {
+                                    print("Failed to send message to iPhone app: \(error.localizedDescription)")
+                                    self.fireLocalNotification()
+                                }
+                                
                             }
                         } else {
                             print("Paired device is not reachable")

@@ -61,7 +61,6 @@ class ViewModelPhone : NSObject,  WCSessionDelegate {
                 if heartRate > 70 {
                     self.showHeartRateNotification()
                 }
-                
             }
         }
         
@@ -127,7 +126,6 @@ class ViewModelPhone : NSObject,  WCSessionDelegate {
             }
         }
     }
-    
 
         func showHeartRateNotification() {
             let content = UNMutableNotificationContent()
@@ -137,6 +135,5 @@ class ViewModelPhone : NSObject,  WCSessionDelegate {
             let request = UNNotificationRequest(identifier: "HighHeartRate", content: content, trigger: nil)
             UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
         }
-    
 }
 
