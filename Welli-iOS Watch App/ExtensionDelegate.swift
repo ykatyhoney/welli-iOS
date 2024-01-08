@@ -3,9 +3,11 @@ import WatchConnectivity
 
 class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
     
+    let session = WCSession.default
+    
     func applicationDidFinishLaunching() {
         if WCSession.isSupported() {
-            let session = WCSession.default
+            //let session = WCSession.default
             session.delegate = self
             do {
                 try session.activate()
@@ -36,6 +38,32 @@ class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
             HeartRateMonitor.shared.sendHeartRateDataToPhone(heartRate)
         }
     }
+    
+    //MARK: to make session consistent
+    func applicationWillEnterForeground() {
+//        if WCSession.default.activationState == .activated {
+//            // Your session is already activated, resume communication.
+//        } else {
+//            // Activate the session if it's not already activated.
+//            WCSession.default.activate()
+//        }
+    }
+    
+    func applicationDidBecomeActive() {
+        
+        if session.activationState == .activated {
+            // Your session is already activated, resume communication.
+        } else {
+            // Activate the session if it's not already activated.
+            do {
+                try session.activate()
+            } catch {
+                print("Failed to activate WCSession: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+
     
 }
 

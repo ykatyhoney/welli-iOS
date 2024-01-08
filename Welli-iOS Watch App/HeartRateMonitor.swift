@@ -80,7 +80,7 @@ class HeartRateMonitor {
 
                 self.fetchMostRecentHeartRateSamples { heartRateSamples in
                     // Extract the heart rate value from the samples
-                    var heartRates = heartRateSamples.map { sample in
+                    let heartRates = heartRateSamples.map { sample in
                         sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
                     }
                     
@@ -97,10 +97,7 @@ class HeartRateMonitor {
                     }
                      */
                     
-                    
-                    //TODO: test code to be removed
-                        heartRates.append(71.0)
-                    //TODO: end of test code to be removed
+                   
                     if heartRates.contains(where: { $0 > 70 }) {
                         if WCSession.default.isReachable {
                             WCSession.default.sendMessage(message, replyHandler: nil) { error in
@@ -115,6 +112,7 @@ class HeartRateMonitor {
                             print("Paired device is not reachable")
                         }
                     }
+                    
 
                     self.isQueryInProgress = false
                     completionHandler()
@@ -165,6 +163,7 @@ class HeartRateMonitor {
         healthStore.execute(query)
     }
     
+    //MARK: Local Notification 
     func fireLocalNotification() {
             let content = UNMutableNotificationContent()
             content.title = "High Heart Rate"

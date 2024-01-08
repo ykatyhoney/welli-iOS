@@ -57,10 +57,11 @@ class ViewModelPhone : NSObject,  WCSessionDelegate {
             for heartRate in heartRates {
                 print("Received heart rate: \(heartRate) bpm")
                 ThresholdNotifier.shared.handleHeartRateSample(heartRate)
-                
+
                 if heartRate > 70 {
                     self.showHeartRateNotification()
                 }
+
             }
         }
         
@@ -126,6 +127,8 @@ class ViewModelPhone : NSObject,  WCSessionDelegate {
             }
         }
     }
+    
+    // MARK: - Local Notification
 
         func showHeartRateNotification() {
             let content = UNMutableNotificationContent()
@@ -135,5 +138,7 @@ class ViewModelPhone : NSObject,  WCSessionDelegate {
             let request = UNNotificationRequest(identifier: "HighHeartRate", content: content, trigger: nil)
             UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
         }
+    
+    
 }
 
