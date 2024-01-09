@@ -1,4 +1,5 @@
 import WatchKit
+import UserNotifications
 import WatchConnectivity
 
 class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
@@ -17,6 +18,9 @@ class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
         }
         
         HeartRateMonitor.shared.startMonitoringHeartRate()
+        
+        //MARK: Schedule Notification
+        scheduleDailyNotifications()
     }
     
     // The workout session will now continue when the app goes into the background
@@ -63,7 +67,36 @@ class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
         }
     }
     
+    //MARK: Schedule Notification
 
+    func scheduleDailyNotifications() {
+        let notificationTimes = ["12:00 PM", "3:00 PM", "6:00 PM", "8:00 PM"]
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"
+        
+        for timeString in notificationTimes {
+            guard let date = dateFormatter.date(from: timeString) else { continue }
+            
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.hour, .minute], from: date)
+            
+            var notification = UNMutableNotificationContent()
+            notification.title = "Daily Reminder"
+            notification.body = "please check in"
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: notification, trigger: trigger)
+            
+            UNUserNotificationCenter.current().add(request) { error in
+                if let error = error {
+                    print("Error scheduling notification: \(error.localizedDescription)")
+                } else {
+                    print("Notification scheduled successfully!")
+                }
+            }
+        }
+    }
     
 }
 
