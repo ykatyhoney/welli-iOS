@@ -70,6 +70,9 @@ class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
     //MARK: Schedule Notification
 
     func scheduleDailyNotifications() {
+        // Cancel All pending notifications
+        cancelAllNotifications()
+        
         let notificationTimes = ["12:00 PM", "3:00 PM", "6:00 PM", "8:00 PM"]
         
         let dateFormatter = DateFormatter()
@@ -97,6 +100,13 @@ class ExtensionDelegate: NSObject, WKApplicationDelegate, WCSessionDelegate {
             }
         }
     }
+    
+    func cancelAllNotifications() {
+            let center = UNUserNotificationCenter.current()
+            
+            // Remove all pending notification requests
+            center.removeAllPendingNotificationRequests()
+        }
     
 }
 
