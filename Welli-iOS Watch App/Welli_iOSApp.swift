@@ -70,36 +70,36 @@ import UIKit
 
 
 struct Welli_iOS_Watch_AppApp: App {
-    @Environment(\.scenePhase) private var scenePhase
-    @WKApplicationDelegateAdaptor(ExtensionDelegate.self) var extensionDelegate
-    
-    @StateObject var environmentObject = WriteViewModel()
+//    @Environment(\.scenePhase) private var scenePhase
+//    @WKApplicationDelegateAdaptor(ExtensionDelegate.self) var extensionDelegate
+//    
+//    @StateObject var environmentObject = WriteViewModel()
 
     
     init() {
-        HeartRateMonitor.shared.startMonitoringHeartRate()
-        
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) {
-            success, error in
-            if success {
-                print("All set!")
-            } else if let error = error {
-                print(error.localizedDescription)
-            }
-        }
+//        HeartRateMonitor.shared.startMonitoringHeartRate()
+//        
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) {
+//            success, error in
+//            if success {
+//                print("All set!")
+//            } else if let error = error {
+//                print(error.localizedDescription)
+//            }
+//        }
     }
     
     
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(environmentObject)
-                .onAppear {
-                if WCSession.isSupported() {
-                    WCSession.default.activate()
-                }
-            }
+//            ContentView()
+//                .environmentObject(environmentObject)
+//                .onAppear {
+//                if WCSession.isSupported() {
+//                    WCSession.default.activate()
+//                }
+//            }
             
         }
         

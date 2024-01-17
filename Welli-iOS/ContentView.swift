@@ -13,16 +13,18 @@ import HealthKitUI
 import BackgroundTasks
 import Firebase
 import FirebaseDatabase
+import Combine
 
 struct ContentView: View {
     
-    var model = ViewModelPhone()
+//    var model = ViewModelPhone()
     @State var reachable = "No"
     @State private var isHealthKitAuthorized = false
     @State private var isNotificationAuthorized = false
     let username = ""  //MARK: CHANGE USERNAME         <-----
-    
-    
+    private var heartRateManager = HeartRateManager()
+    private var notificationScheduler = NotificationScheduler()
+
     var body: some View {
         VStack {
             Image(systemName: "wifi")
@@ -39,12 +41,12 @@ struct ContentView: View {
             //MARK: REACH FIREBASE CONNECT
             Text("Reachable: \(reachable)")
             Button(action: {
-                if self.model.session.isReachable{
-                    self.reachable = "Yes"
-                }
-                else{
-                    self.reachable = "No"
-                }
+//                if self.model.session.isReachable{
+//                    self.reachable = "Yes"
+//                }
+//                else{
+//                    self.reachable = "No"
+//                }
                 
             }) {
                 Text("Update")
@@ -68,6 +70,19 @@ struct ContentView: View {
             
         }
         .padding()
+        .onAppear(perform: {
+            Task {
+                do {
+                    try await heartRateManager.requestAuthorization()
+                    heartRateManager.startObservation()
+                } catch {
+                    print("error happened \(error)")
+                }
+            }
+        })
+        .onReceive(heartRateManager.highHeartRatePublisher, perform: { _ in
+            notificationScheduler.scheduleHeartRateNotification()
+        })
     }
 }
 
